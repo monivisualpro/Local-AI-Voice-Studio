@@ -3,7 +3,6 @@
   "appId": "com.localaivoicestudio.app",
   "productName": "Local AI Voice Studio",
   "copyright": "Copyright (C) 2026 Moni Visual Pro",
-  "license": "LICENSE",
   "directories": {
     "output": "release",
     "buildResources": "build"

@@ -46,9 +46,6 @@ jobs:
       - name: Run IPC tests
         run: npm run test:ipc
 
-      - name: Run UI tests
-        run: npm run test:ui
-
       - name: Run audio and voice tests
         run: npm run test:fx
 

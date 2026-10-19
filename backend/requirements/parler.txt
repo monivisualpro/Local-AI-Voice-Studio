@@ -1,0 +1,6 @@
+parler-tts
+sentencepiece
+protobuf
+soundfile
+numpy
+torch

@@ -1,0 +1,64 @@
+# Local AI Voice Studio Source-Available License
+
+**Copyright © 2026 Moni Visual Pro. All rights reserved, except for the permissions expressly granted below.**
+
+## 1. Permission to Use
+
+Permission is granted to any person to download, install, run, and use Local AI Voice Studio for personal, educational, research, and commercial purposes, subject to the terms of this license.
+
+Users may use the software to create voice recordings, audio content, commercial projects, and other lawful outputs. This license does not claim ownership of content created by users.
+
+## 2. Restrictions on Selling and Redistribution
+
+You may not:
+
+- Sell, rent, lease, sublicense, or charge a fee for access to or distribution of Local AI Voice Studio, whether in its original or modified form.
+- Repackage or redistribute this software as a paid application, paid download, subscription product, or commercial software bundle.
+- Use, copy, modify, or incorporate this software's source code into a proprietary, closed-source, or paid software product that you develop, distribute, license, or sell.
+- Remove copyright notices, license terms, or attribution identifying the original project.
+- Claim that you are the original creator or copyright owner of Local AI Voice Studio.
+
+These restrictions do not prohibit charging for independent services, consulting, training, or other work that does not involve selling, licensing, or redistributing this software or its source code.
+
+## 3. Modification and Free Redistribution
+
+You may study and modify the source code for personal use, learning, testing, and development, provided you comply with this license.
+
+You may redistribute the original or modified software free of charge, provided that you:
+
+- Include this license and the original copyright notice.
+- Clearly identify any modifications you have made.
+- Do not represent your version as the official release of Moni Visual Pro.
+- Do not impose additional restrictions that conflict with this license.
+
+## 4. Third-Party Components and AI Models
+
+Local AI Voice Studio may integrate with third-party software libraries, AI models, voice engines, and other components.
+
+Such components remain subject to their own licenses, terms, and restrictions. This license does not grant ownership of, or additional rights to, third-party components.
+
+Users are responsible for complying with applicable model licenses, including restrictions on commercial use, voice cloning, consent, and redistribution.
+
+Providing a link to an official model repository does not mean that Moni Visual Pro owns or endorses that model.
+
+## 5. Trademarks and Branding
+
+This license does not grant permission to use the Moni Visual Pro name, logo, branding, or official project identity in a way that suggests endorsement, affiliation, or an official release without authorization.
+
+## 6. No Warranty
+
+The software is provided "AS IS", without warranties or conditions of any kind, express or implied, to the maximum extent permitted by applicable law.
+
+To the maximum extent permitted by law, the copyright holder is not liable for claims, damages, or other liability arising from the software or its use.
+
+## 7. Termination
+
+Permissions under this license terminate automatically if you materially violate its terms. Permissions may be reinstated if the violation is corrected, to the extent permitted by applicable law.
+
+## 8. Copyright and Contact
+
+**Project:** Local AI Voice Studio  
+**Copyright holder:** Moni Visual Pro  
+**Project website:** https://monivisualpro.web.app
+
+For questions about commercial licensing, exceptions, or additional permissions, contact the copyright holder through the official project website.

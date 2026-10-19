@@ -1,0 +1,25 @@
+name: Build installers
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: windows-latest, target: win,   folder: windows }
+          - { os: macos-latest,   target: mac,   folder: macos }
+          - { os: ubuntu-latest,  target: linux, folder: linux }
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm install --legacy-peer-deps
+      - run: npm run dist:${{ matrix.target }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.folder }}
+          path: release/${{ matrix.folder }}/*

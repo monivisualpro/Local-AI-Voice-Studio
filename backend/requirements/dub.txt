@@ -1,0 +1,12 @@
+faster-whisper>=1.1.0
+ctranslate2>=4.4.0
+transformers>=4.46,<5
+sentencepiece
+protobuf
+accelerate
+demucs==4.0.1
+imageio-ffmpeg
+soundfile
+numpy<2
+torch
+torchaudio

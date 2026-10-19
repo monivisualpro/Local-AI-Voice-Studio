@@ -1,0 +1,126 @@
+{
+  "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
+  "appId": "com.localaivoicestudio.app",
+  "productName": "Local AI Voice Studio",
+  "copyright": "Copyright (C) 2026 Moni Visual Pro",
+  "directories": {
+    "output": "release",
+    "buildResources": "build"
+  },
+  "files": [
+    "dist/**/*",
+    "electron/**/*",
+    "package.json",
+    "!node_modules/**/*"
+  ],
+  "extraMetadata": {
+    "main": "electron/main.cjs"
+  },
+  "extraResources": [
+    {
+      "from": "backend/",
+      "to": "backend",
+      "filter": [
+        "**/*.py",
+        "requirements/*.txt",
+        "!**/__pycache__/**"
+      ]
+    }
+  ],
+  "win": {
+    "target": [
+      {
+        "target": "nsis",
+        "arch": [
+          "x64"
+        ]
+      }
+    ],
+    "icon": "build/icon.ico",
+    "signAndEditExecutable": true
+  },
+  "nsis": {
+    "oneClick": false,
+    "perMachine": false,
+    "allowElevation": true,
+    "allowToChangeInstallationDirectory": true,
+    "include": "build/installer.nsh",
+    "createDesktopShortcut": true,
+    "createStartMenuShortcut": true,
+    "shortcutName": "Local AI Voice Studio",
+    "runAfterFinish": true,
+    "deleteAppDataOnUninstall": false,
+    "artifactName": "Local-AI-Voice-Studio-Setup-${version}.${ext}",
+    "uninstallDisplayName": "Local AI Voice Studio",
+    "installerIcon": "build/icon.ico",
+    "uninstallerIcon": "build/icon.ico",
+    "installerHeaderIcon": "build/icon.ico"
+  },
+  "mac": {
+    "category": "public.app-category.productivity",
+    "icon": "build/icon.icns",
+    "target": [
+      {
+        "target": "dmg",
+        "arch": [
+          "x64",
+          "arm64"
+        ]
+      },
+      {
+        "target": "pkg",
+        "arch": [
+          "x64",
+          "arm64"
+        ]
+      }
+    ],
+    "hardenedRuntime": false,
+    "gatekeeperAssess": false
+  },
+  "dmg": {
+    "title": "Local AI Voice Studio ${version}",
+    "artifactName": "Local-AI-Voice-Studio-${version}-${arch}.${ext}"
+  },
+  "pkg": {
+    "allowAnywhere": true,
+    "allowCurrentUserHome": true,
+    "allowRootDirectory": true,
+    "isRelocatable": true,
+    "installLocation": "/Applications",
+    "artifactName": "Local-AI-Voice-Studio-Installer-${version}-${arch}.${ext}"
+  },
+  "linux": {
+    "category": "AudioVideo",
+    "icon": "build/icon.png",
+    "synopsis": "Text-to-speech, voice cloning and dubbing on your own PC",
+    "maintainer": "Moni Visual Pro <support@localhost.invalid>",
+    "target": [
+      {
+        "target": "AppImage",
+        "arch": [
+          "x64"
+        ]
+      },
+      {
+        "target": "deb",
+        "arch": [
+          "x64"
+        ]
+      },
+      {
+        "target": "tar.gz",
+        "arch": [
+          "x64"
+        ]
+      }
+    ],
+    "artifactName": "Local-AI-Voice-Studio-${version}-linux-${arch}.${ext}"
+  },
+  "appImage": {
+    "artifactName": "Local-AI-Voice-Studio-${version}-x86_64.${ext}"
+  },
+  "deb": {
+    "artifactName": "local-ai-voice-studio_${version}_amd64.${ext}"
+  }
+}

@@ -1,0 +1,338 @@
+@import "tailwindcss";
+
+@layer base {
+  :root, html.dark {
+    color-scheme: dark;
+    --bg-primary: #080A0F;
+    --bg-secondary: #0D1016;
+    --surface: #11151D;
+    --surface-elevated: #181D27;
+    --surface-hover: #1D2430;
+    --border: rgba(255, 255, 255, 0.08);
+    --border-strong: rgba(255, 255, 255, 0.14);
+    --border-subtle: rgba(255, 255, 255, 0.04);
+    
+    --cyan-primary: #00D9FF;
+    --cyan-secondary: #22E7FF;
+    --pink-primary: #FF3CAC;
+    --pink-secondary: #FF5ACD;
+    
+    --text-primary: #F5F7FA;
+    --text-secondary: #A2AAB8;
+    --text-muted: #6F7888;
+    
+    --success: #32D583;
+    --warning: #FFB547;
+    --error: #FF5C70;
+  }
+
+  html.light {
+    color-scheme: light;
+    --bg-primary: #F4F6F9;
+    --bg-secondary: #E9EEF5;
+    --surface: #FFFFFF;
+    --surface-elevated: #F8FAFC;
+    --surface-hover: #F1F5F9;
+    --border: rgba(15, 23, 42, 0.09);
+    --border-strong: rgba(15, 23, 42, 0.16);
+    --border-subtle: rgba(15, 23, 42, 0.05);
+    
+    --cyan-primary: #0284C7;
+    --cyan-secondary: #0EA5E9;
+    --pink-primary: #D91B7A;
+    --pink-secondary: #E11D48;
+    
+    --text-primary: #0F172A;
+    --text-secondary: #475569;
+    --text-muted: #64748B;
+    
+    --success: #16A34A;
+    --warning: #D97706;
+    --error: #E11D48;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    overflow-x: hidden;
+    letter-spacing: -0.01em;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  code, pre, .font-mono, .tabular-nums {
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* =========================================================
+   LIGHT / WHITE THEME OVERRIDES
+   Ensures seamless, 100% complete transformation for light mode
+   ========================================================= */
+html.light .bg-\[\#080A0F\],
+html.light .bg-\[\#080A0F\]\/90 {
+  background-color: var(--bg-primary) !important;
+}
+
+html.light .bg-\[\#0D1016\] {
+  background-color: var(--bg-secondary) !important;
+}
+
+html.light .bg-\[\#11151D\],
+html.light .bg-\[\#11151D\]\/60,
+html.light .bg-\[\#11151D\]\/90 {
+  background-color: var(--surface) !important;
+}
+
+html.light .bg-\[\#181D27\] {
+  background-color: var(--surface-elevated) !important;
+}
+
+html.light .bg-\[\#1D2430\] {
+  background-color: var(--surface-hover) !important;
+}
+
+html.light .hover\:bg-\[\#11151D\]:hover,
+html.light .hover\:bg-\[\#11151D\]\/60:hover {
+  background-color: var(--surface-hover) !important;
+}
+
+html.light .hover\:bg-\[\#181D27\]:hover {
+  background-color: var(--surface-hover) !important;
+}
+
+html.light .hover\:bg-\[\#1D2430\]:hover {
+  background-color: #E2E8F0 !important;
+}
+
+/* Gradients in light mode */
+html.light .from-\[\#080A0F\] {
+  --tw-gradient-from: #F4F6F9 var(--tw-gradient-from-position) !important;
+}
+html.light .via-\[\#0D1016\] {
+  --tw-gradient-stops: var(--tw-gradient-from), #E9EEF5 var(--tw-gradient-via-position), var(--tw-gradient-to) !important;
+}
+html.light .to-\[\#080A0F\] {
+  --tw-gradient-to: #F4F6F9 var(--tw-gradient-to-position) !important;
+}
+
+/* Text in light mode */
+html.light .text-\[\#F5F7FA\],
+html.light .hover\:text-\[\#F5F7FA\]:hover,
+html.light .group-hover\:text-white:hover,
+html.light .group-hover\:text-\[\#F5F7FA\]:hover {
+  color: var(--text-primary) !important;
+}
+
+html.light .text-\[\#A2AAB8\],
+html.light .hover\:text-\[\#A2AAB8\]:hover,
+html.light .group-hover\:text-\[\#A2AAB8\]:hover {
+  color: var(--text-secondary) !important;
+}
+
+html.light .text-\[\#6F7888\] {
+  color: var(--text-muted) !important;
+}
+
+html.light .text-\[\#00D9FF\] {
+  color: var(--cyan-primary) !important;
+}
+
+html.light .text-\[\#FF3CAC\] {
+  color: var(--pink-primary) !important;
+}
+
+/* Borders in light mode */
+html.light .border-white\/\[0\.08\],
+html.light .border-white\/\[0\.06\],
+html.light .border-white\/\[0\.04\],
+html.light .border-white\/10,
+html.light .border-white\/20,
+html.light .hover\:border-white\/\[0\.12\]:hover {
+  border-color: var(--border) !important;
+}
+
+html.light .border-white\/\[0\.12\],
+html.light .border-white\/\[0\.13\] {
+  border-color: var(--border-strong) !important;
+}
+
+/* White tinted badges and fills */
+html.light .bg-white\/\[0\.05\],
+html.light .bg-white\/\[0\.04\],
+html.light .bg-white\/\[0\.03\],
+html.light .bg-white\/\[0\.02\] {
+  background-color: rgba(15, 23, 42, 0.05) !important;
+}
+
+html.light .bg-white\/10 {
+  background-color: rgba(15, 23, 42, 0.08) !important;
+}
+
+html.light .bg-white\/15 {
+  background-color: rgba(15, 23, 42, 0.12) !important;
+}
+
+html.light .text-white\/20 {
+  color: rgba(15, 23, 42, 0.25) !important;
+}
+
+/* Light mode Shadows */
+html.light .shadow-\[0_10px_40px_rgba\(0\,0\,0\,0\.25\)\],
+html.light .shadow-\[0_8px_32px_rgba\(0\,0\,0\,0\.2\)\],
+html.light .shadow-\[0_20px_60px_rgba\(0\,0\,0\,0\.4\)\] {
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06) !important;
+}
+
+/* Light mode inputs and textareas */
+html.light input:not([type="checkbox"]):not([type="radio"]),
+html.light textarea,
+html.light select {
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
+  border-color: rgba(15, 23, 42, 0.12) !important;
+}
+
+html.light input:focus,
+html.light textarea:focus,
+html.light select:focus {
+  border-color: var(--cyan-primary) !important;
+  box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.15) !important;
+}
+
+/* Explicit native option & optgroup contrast styling across OS dropdowns */
+select option,
+select optgroup {
+  background-color: #11151D !important;
+  color: #F5F7FA !important;
+}
+
+select optgroup {
+  font-weight: 700 !important;
+  color: #00D9FF !important;
+}
+
+html.light select option,
+html.light select optgroup {
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
+}
+
+html.light select optgroup {
+  font-weight: 700 !important;
+  color: #0284C7 !important;
+}
+
+/* Apple panels in light mode */
+html.light .apple-panel {
+  background: rgba(255, 255, 255, 0.94) !important;
+  border-color: rgba(15, 23, 42, 0.09) !important;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06) !important;
+}
+
+html.light .apple-card-elevated {
+  background: #FFFFFF !important;
+  border-color: rgba(15, 23, 42, 0.09) !important;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04) !important;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--surface-elevated);
+  border-radius: 9999px;
+  border: 1px solid var(--border);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--surface-hover);
+}
+
+html.light ::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+html.light ::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border: 1px solid var(--border);
+}
+html.light ::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+/* Apple-style soft glass & elevated cards */
+.apple-panel {
+  background: rgba(17, 21, 29, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+}
+
+.apple-card-elevated {
+  background: #181D27;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+/* Primary CTA gradient button */
+.btn-primary-cta {
+  background: #00D9FF;
+  color: #080A0F;
+  font-weight: 600;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 20px rgba(0, 217, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.btn-primary-cta:hover {
+  background: #22E7FF;
+  box-shadow: 0 6px 24px rgba(0, 217, 255, 0.35), 0 0 12px rgba(255, 60, 172, 0.2);
+}
+.btn-primary-cta:active {
+  background: #00b9db;
+  transform: scale(0.985);
+}
+
+html.light .btn-primary-cta {
+  background: #0284C7;
+  color: #FFFFFF;
+  border: 1px solid rgba(2, 132, 199, 0.4);
+  box-shadow: 0 4px 16px rgba(2, 132, 199, 0.25);
+}
+html.light .btn-primary-cta:hover {
+  background: #0369A1;
+  box-shadow: 0 6px 20px rgba(2, 132, 199, 0.35);
+}
+
+/* Subtle gradient accent for selected active badges or primary accents */
+.badge-gradient-accent {
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.15) 0%, rgba(255, 60, 172, 0.12) 100%);
+  border: 1px solid rgba(0, 217, 255, 0.3);
+  color: #00D9FF;
+}
+
+html.light .badge-gradient-accent {
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.12) 0%, rgba(217, 27, 122, 0.08) 100%);
+  border: 1px solid rgba(2, 132, 199, 0.3);
+  color: #0284C7;
+}
+
+/* Waveform bars */
+.waveform-bar-active {
+  background: #00D9FF;
+}
+.waveform-bar-accent {
+  background: #FF3CAC;
+}
+
+html.light .waveform-bar-active {
+  background: #0284C7;
+}
+html.light .waveform-bar-accent {
+  background: #D91B7A;
+}

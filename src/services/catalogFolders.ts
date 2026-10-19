@@ -1,0 +1,68 @@
+import { ReferenceFolder } from '../types/tts';
+
+export const INITIAL_REFERENCE_FOLDERS: ReferenceFolder[] = [
+  {
+    id: 'folder-celebrities-iconic',
+    name: 'Iconic-Style & Narrator Voices',
+    description: 'Narrator, trailer, documentary and screen-style voices for expressive zero-shot voice cloning. Generic sample recordings.',
+    color: '#FFB547',
+    createdAt: 1704067200000,
+    isDefault: true,
+  },
+  {
+    id: 'folder-english-accents',
+    name: 'English Accents & Dialects',
+    description: 'Regional English accents across North America, the UK, Australia, and pristine benchmark audiobooks.',
+    color: '#00D9FF',
+    createdAt: 1704067200000,
+    isDefault: true,
+  },
+  {
+    id: 'folder-european-languages',
+    name: 'European Accents & Languages',
+    description: 'Acoustic references for German (Hochdeutsch) and European languages with authentic vocal cadence.',
+    color: '#FF3CAC',
+    createdAt: 1704067200000,
+    isDefault: true,
+  },
+  {
+    id: 'folder-asian-languages',
+    name: 'Asian Languages & Accents',
+    description: 'High-clarity reference stems for Mandarin tonal and non-tonal Asian linguistic phonetics.',
+    color: '#32D583',
+    createdAt: 1704067200000,
+    isDefault: true,
+  },
+  {
+    id: 'folder-animated-characters',
+    name: 'Animated & Expressive Characters',
+    description: 'Animated cartoon characters, gaming personas, and highly expressive stylized voices.',
+    color: '#A855F7',
+    createdAt: 1704067200000,
+    isDefault: true,
+  },
+  {
+    id: 'folder-hindi-accents',
+    name: 'Hindi Accents & Dialects',
+    description: 'Standard Hindi, Hinglish, and regional Indian accent stems for multilingual narration.',
+    color: '#FF8A3D',
+    createdAt: 1704067200000,
+    isDefault: true,
+  },
+  {
+    id: 'folder-arabic-accents',
+    name: 'Arabic Accents & Dialects',
+    description: 'Modern Standard Arabic plus Egyptian, Levantine, Gulf, Iraqi, and Maghrebi dialect stems.',
+    color: '#E879F9',
+    createdAt: 1704067200000,
+    isDefault: true,
+  },
+  {
+    id: 'folder-custom-clones',
+    name: 'My Cloned Audio References',
+    description: 'User-recorded stems, uploaded audio references, and zero-shot custom voice cloning files.',
+    color: '#6366F1',
+    createdAt: 1704067200000,
+    isDefault: true,
+  },
+];

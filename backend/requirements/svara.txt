@@ -1,0 +1,10 @@
+transformers>=4.46,<5
+accelerate
+snac
+peft
+sentencepiece
+protobuf
+soundfile
+numpy
+torch
+torchaudio

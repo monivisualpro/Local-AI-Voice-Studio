@@ -1,0 +1,4 @@
+chatterbox-tts
+soundfile
+numpy
+setuptools<81

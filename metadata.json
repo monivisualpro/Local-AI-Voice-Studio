@@ -1,0 +1,5 @@
+{
+  "name": "Local AI Voice Studio",
+  "description": "Local-first AI voice studio: text-to-speech, voice cloning and dubbing, running on your own GPU/CPU.",
+  "requestFramePermissions": []
+}

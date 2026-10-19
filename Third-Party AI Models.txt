@@ -1,0 +1,13 @@
+# Third-Party AI Models
+
+Moni Visual Pro does not claim ownership of third-party AI models.
+
+The application provides integrations that allow users to discover and download models from their respective official repositories.
+
+Each model remains subject to its own license and terms of use. Users are responsible for reviewing and complying with the applicable restrictions, including commercial-use and research-only limitations.
+
+Model names, copyrights, trademarks, weights, and associated intellectual property remain with their respective owners.
+
+Official model links and license information are provided in the application's model manager.
+
+The availability of a model through this application does not imply endorsement by, affiliation with, or permission from its publisher beyond what the applicable terms allow.

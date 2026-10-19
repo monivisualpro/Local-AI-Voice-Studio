@@ -1,0 +1,5 @@
+tortoise-tts==3.0.0
+numpy<2
+soundfile
+torch
+torchaudio

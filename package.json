@@ -1,0 +1,57 @@
+{
+  "name": "local-ai-voice-studio",
+  "private": true,
+  "version": "0.20.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port=3000 --strictPort --host=0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview",
+    "clean": "rm -rf dist",
+    "lint": "tsc --noEmit",
+    "electron:dev": "concurrently -k \"vite --port=3000 --strictPort --host=127.0.0.1\" \"wait-on http://127.0.0.1:3000 && electron .\"",
+    "test:downloads": "node tests/downloadEngine.selftest.cjs && node tests/modelManager.wiring.test.cjs && node tests/modelManager.completeness.test.cjs && node tests/indicParler.download.test.cjs && node tests/voiceFiles.test.cjs && node tests/dataLocations.test.cjs && node tests/dubRunner.test.cjs && node tests/modelManager.layout.test.cjs",
+    "test:runtime": "node tests/runtime.e2e.cjs && node tests/runtime.resume.cjs && node tests/runtime.realistic.cjs && node tests/runtime.shared.cjs",
+    "test:ipc": "node tests/mainIpc.test.cjs",
+    "test:ui": "tsx tests/ui.storage.test.tsx && tsx tests/ui.dubbingSetup.test.tsx && tsx tests/ui.dubbingFlow.test.tsx",
+    "test:dub": "python3 tests/test_cancel.py && python3 tests/test_qwen_guard.py && python3 tests/test_parler_guard.py && python3 tests/test_dub_pipeline.py && python3 tests/test_dub_analyze.py && python3 tests/test_urdu_engine.py",
+    "test:fx": "tsx tests/audioEffects.test.ts && tsx tests/voiceInstruction.test.ts && tsx tests/textChunker.test.ts",
+    "test:network": "node tests/realcdn.cjs",
+    "test:electron": "vite build && node tests/electron-runner.cjs",
+    "dist:win": "node tools/build-installers.cjs win",
+    "dist:mac": "node tools/build-installers.cjs mac",
+    "dist:linux": "node tools/build-installers.cjs linux",
+    "dist:all": "node tools/build-installers.cjs all"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.3.3",
+    "@vitejs/plugin-react": "^6.1.1",
+    "lucide-react": "^0.546.0",
+    "motion": "^12.23.24",
+    "react": "^19.0.1",
+    "react-dom": "^19.0.1",
+    "vite": "^8.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "autoprefixer": "^10.4.21",
+    "concurrently": "^10.0.5",
+    "electron": "^44.4.5",
+    "electron-builder": "^26.15.3",
+    "tailwindcss": "^4.3.3",
+    "tsx": "^4.21.0",
+    "typescript": "^7.0.2",
+    "wait-on": "^9.1.0"
+  },
+  "main": "electron/main.cjs",
+  "productName": "Local AI Voice Studio",
+  "description": "Local AI Voice Studio - text-to-speech, voice cloning and dubbing on your own PC",
+  "author": {
+    "name": "Moni Visual Pro",
+    "email": "support@localhost.invalid"
+  },
+  "homepage": "https://github.com/monivisualpro/local-ai-voice-studio",
+  "desktopName": "local-ai-voice-studio.desktop"
+}

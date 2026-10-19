@@ -9,7 +9,7 @@ let pickedFolder = null; let exposed = null; const invoked = new Set();
 const win = { webContents: { send: noop, on: noop, setWindowOpenHandler: noop, openDevTools: noop, session: deep() }, loadURL: noop, loadFile: noop, on: noop, once: noop, show: noop, isDestroyed: () => false, setMenu: noop };
 const electron = {
   app: { getPath: (n) => (n === 'userData' ? userData : os.tmpdir()), getName: () => 'test', getVersion: () => '0', isPackaged: false,
-    whenReady: () => new Promise(() => {}), on: noop, once: noop, quit: noop, requestSingleInstanceLock: () => true, commandLine: { appendSwitch: noop }, setAppUserModelId: noop },
+    whenReady: () => new Promise(() => {}), on: noop, once: noop, quit: noop, requestSingleInstanceLock: () => true, commandLine: { appendSwitch: noop }, setAppUserModelId: noop, setName: noop },
   BrowserWindow: Object.assign(function () { return win; }, { getAllWindows: () => [] }),
   ipcMain: { handle: (ch, fn) => handlers.set(ch, fn), on: noop },
   dialog: { showOpenDialog: async () => ({ canceled: !pickedFolder, filePaths: pickedFolder ? [pickedFolder] : [] }), showSaveDialog: async () => ({ canceled: true }), showErrorBox: noop },

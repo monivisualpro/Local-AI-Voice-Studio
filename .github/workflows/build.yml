@@ -1,173 +1,316 @@
-name: Build installers
+
+name: Build Installers
 
 on:
   workflow_dispatch:
   push:
-    tags: ['v*']
+    tags:
+      - 'v*'
   pull_request:
     types: [opened, synchronize, reopened]
-    branches: ['main']
+    branches:
+      - main
 
 permissions:
-  contents: write
+  contents: read
 
 env:
   NODE_VERSION: '24'
-  PYTHON_VERSION: '3.11'
-
 
 jobs:
+  # --------------------------------------------------
+  # 1. Test the application before building installers
+  # --------------------------------------------------
   test:
-    name: Test (all platforms)
+    name: Test Application
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: npm
+
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
+
       - name: Build frontend
         run: npm run build
-      - name: Run download engine tests (core)
-        run: node tests/downloadEngine.selftest.cjs 2>&1 | grep -E "(PASS|FAIL)" || true
+
+      - name: Run download engine tests
+        run: node tests/downloadEngine.selftest.cjs
+
       - name: Run IPC tests
         run: npm run test:ipc
+
       - name: Run UI tests
         run: npm run test:ui
-      - name: Run audio/voice tests
+
+      - name: Run audio and voice tests
         run: npm run test:fx
+
+  # --------------------------------------------------
+  # 2. Build Windows installers
+  # --------------------------------------------------
   build-windows:
     name: Build Windows
     needs: test
     if: github.event_name != 'pull_request'
     runs-on: windows-latest
-    env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: npm
+
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
+
       - name: Build frontend
         run: npm run build
+
       - name: Build Windows installer
         run: npm run dist:win
-      - name: List build output
+
+      - name: Verify Windows output
+        shell: pwsh
         run: |
-          ls -la release/windows/
+          if (!(Test-Path "release/windows")) {
+            throw "Windows output directory does not exist."
+          }
+
+          $files = Get-ChildItem "release/windows" -File -Recurse
+
+          if ($files.Count -eq 0) {
+            throw "No Windows installer files were generated."
+          }
+
+          $files | Select-Object FullName, Length
+
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
         with:
           name: windows
-          path: release/windows/*
+          path: release/windows/
+          if-no-files-found: error
           retention-days: 30
-      - name: Release (tag push only)
-        if: startsWith(github.ref, 'refs/tags/v')
-        uses: softprops/action-gh-release@v2
-        with:
-          files: release/windows/*
-          draft: false
-          prerelease: false
-          generate_release_notes: true
 
+  # --------------------------------------------------
+  # 3. Build macOS installers
+  # --------------------------------------------------
   build-macos:
     name: Build macOS
     needs: test
     if: github.event_name != 'pull_request'
     runs-on: macos-latest
-    env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: npm
+
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
+
       - name: Build frontend
         run: npm run build
+
       - name: Build macOS installers
         run: npm run dist:mac
-      - name: List build output
+
+      - name: Verify macOS output
+        shell: bash
         run: |
-          ls -la release/macos/
+          test -d release/macos || {
+            echo "::error::macOS output directory does not exist."
+            exit 1
+          }
+
+          find release/macos -type f -print -quit | grep -q . || {
+            echo "::error::No macOS installer files were generated."
+            exit 1
+          }
+
+          find release/macos -type f -print
+
       - name: Upload macOS artifacts
         uses: actions/upload-artifact@v4
         with:
           name: macos
-          path: release/macos/*
+          path: release/macos/
+          if-no-files-found: error
           retention-days: 30
-      - name: Release (tag push only)
-        if: startsWith(github.ref, 'refs/tags/v')
-        uses: softprops/action-gh-release@v2
-        with:
-          files: release/macos/*
-          draft: false
-          prerelease: false
-          generate_release_notes: true
 
+  # --------------------------------------------------
+  # 4. Build Linux installers
+  # --------------------------------------------------
   build-linux:
     name: Build Linux
     needs: test
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
-    env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-      - name: Install system dependencies for electron-builder
+          cache: npm
+
+      - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libnss3-dev libatk-bridge2.0-dev libdrm2 libxkbcommon-dev libgbm-dev libasound2-dev
+          sudo apt-get install -y \
+            libnss3-dev \
+            libatk-bridge2.0-dev \
+            libdrm2 \
+            libxkbcommon-dev \
+            libgbm-dev \
+            libasound2-dev
+
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
+
       - name: Build frontend
         run: npm run build
+
       - name: Build Linux installers
         run: npm run dist:linux
-      - name: List build output
+
+      - name: Verify Linux output
+        shell: bash
         run: |
-          ls -la release/linux/
+          test -d release/linux || {
+            echo "::error::Linux output directory does not exist."
+            exit 1
+          }
+
+          find release/linux -type f -print -quit | grep -q . || {
+            echo "::error::No Linux installer files were generated."
+            exit 1
+          }
+
+          find release/linux -type f -print
+
       - name: Upload Linux artifacts
         uses: actions/upload-artifact@v4
         with:
           name: linux
-          path: release/linux/*
+          path: release/linux/
+          if-no-files-found: error
           retention-days: 30
-      - name: Release (tag push only)
-        if: startsWith(github.ref, 'refs/tags/v')
-        uses: softprops/action-gh-release@v2
-        with:
-          files: release/linux/*
-          draft: false
-          prerelease: false
-          generate_release_notes: true
 
-  build-all:
-    name: Build All (summary)
-    needs: [build-windows, build-macos, build-linux]
-    if: github.event_name != 'pull_request' && always()
+  # --------------------------------------------------
+  # 5. Report results without masking build failures
+  # --------------------------------------------------
+  build-summary:
+    name: Build Summary
+    needs:
+      - test
+      - build-windows
+      - build-macos
+      - build-linux
+    if: always() && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
+
     steps:
       - name: Summarize build results
+        shell: bash
+        env:
+          TEST_RESULT: ${{ needs.test.result }}
+          WINDOWS_RESULT: ${{ needs.build-windows.result }}
+          MACOS_RESULT: ${{ needs.build-macos.result }}
+          LINUX_RESULT: ${{ needs.build-linux.result }}
         run: |
           echo "Build Summary"
           echo "============="
-          echo "build-windows: ${{ needs.build-windows.result }}"
-          echo "build-macos: ${{ needs.build-macos.result }}"
-          echo "build-linux: ${{ needs.build-linux.result }}"
-          if [[ "${{ needs.build-windows.result }}" != "success" || "${{ needs.build-macos.result }}" != "success" || "${{ needs.build-linux.result }}" != "success" ]]; then
-            echo "::error::One or more platform builds failed"
+          echo "Tests: $TEST_RESULT"
+          echo "Windows: $WINDOWS_RESULT"
+          echo "macOS: $MACOS_RESULT"
+          echo "Linux: $LINUX_RESULT"
+
+          if [[ "$TEST_RESULT" != "success" ]]; then
+            echo "::error::Application tests failed or were skipped."
             exit 1
           fi
-          echo "All platform builds succeeded"
+
+          if [[ "$WINDOWS_RESULT" != "success" ||
+                "$MACOS_RESULT" != "success" ||
+                "$LINUX_RESULT" != "success" ]]; then
+            echo "::error::One or more platform builds failed or were skipped."
+            exit 1
+          fi
+
+          echo "All platform builds succeeded."
+
+  # --------------------------------------------------
+  # 6. Publish one GitHub Release after all builds pass
+  # --------------------------------------------------
+  release:
+    name: Publish GitHub Release
+    needs:
+      - build-windows
+      - build-macos
+      - build-linux
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download Windows artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: windows
+          path: release/windows/
+
+      - name: Download macOS artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: macos
+          path: release/macos/
+
+      - name: Download Linux artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: linux
+          path: release/linux/
+
+      - name: Verify release assets
+        shell: bash
+        run: |
+          find release -type f -print
+
+          test -n "$(find release -type f -print -quit)" || {
+            echo "::error::No release assets found."
+            exit 1
+          }
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            release/windows/**/*
+            release/macos/**/*
+            release/linux/**/*
+          draft: false
+          prerelease: false
+          generate_release_notes: true

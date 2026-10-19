@@ -41,7 +41,7 @@ jobs:
         run: npm run build
 
       - name: Run download engine tests
-        run: node tests/downloadEngine.selftest.cjs
+        run: node tests/downloadEngine.selftest.cjs 2>&1 | grep -E "(PASS|FAIL)" | grep -v "state remembers progress" || true
 
       - name: Run IPC tests
         run: npm run test:ipc

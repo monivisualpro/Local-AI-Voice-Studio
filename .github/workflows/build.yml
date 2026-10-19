@@ -173,10 +173,9 @@ jobs:
         run: |
           echo "Build Summary"
           echo "============="
-          for job in build-windows build-macos build-linux; do
-            result="${{ needs.$job.result }}"
-            echo "$job: $result"
-          done
+          echo "build-windows: ${{ needs.build-windows.result }}"
+          echo "build-macos: ${{ needs.build-macos.result }}"
+          echo "build-linux: ${{ needs.build-linux.result }}"
           if [[ "${{ needs.build-windows.result }}" != "success" || "${{ needs.build-macos.result }}" != "success" || "${{ needs.build-linux.result }}" != "success" ]]; then
             echo "::error::One or more platform builds failed"
             exit 1

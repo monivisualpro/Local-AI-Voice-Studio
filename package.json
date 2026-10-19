@@ -53,5 +53,6 @@
     "email": "support@localhost.invalid"
   },
   "homepage": "https://github.com/monivisualpro/local-ai-voice-studio",
-  "desktopName": "local-ai-voice-studio.desktop"
+  "desktopName": "local-ai-voice-studio.desktop",
+  "license": "SEE LICENSE IN LICENSE"
 }

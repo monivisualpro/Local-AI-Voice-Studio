@@ -37,10 +37,14 @@ for (const key of wanted) {
   }
   fs.rmSync(path.join(root, p.out), { recursive: true, force: true });
   const ok = run(npx, ['electron-builder', p.flag, '--config', 'electron-builder.json', `-c.directories.output=${p.out}`, '--publish', 'never']);
-  if (ok && key === 'linux') {
-    fs.copyFileSync(path.join(root, 'installers/linux/install-linux.sh'), path.join(root, p.out, 'install-linux.sh'));
-  }
-  results.push([p.label, ok ? p.out : 'FAILED']);
+if (ok && key === 'linux') {
+        fs.copyFileSync(path.join(root, 'installers/linux/install-linux.sh'), path.join(root, p.out, 'install-linux.sh'));
+      }
+      // Copy license files to each platform output folder
+      fs.copyFileSync(path.join(root, 'LICENSE'), path.join(root, p.out, 'LICENSE'));
+      fs.copyFileSync(path.join(root, 'THIRD_PARTY_MODELS.md'), path.join(root, p.out, 'THIRD_PARTY_MODELS.md'));
+      fs.copyFileSync(path.join(root, 'THIRD_PARTY_NOTICES.md'), path.join(root, p.out, 'THIRD_PARTY_NOTICES.md'));
+      results.push([p.label, ok ? p.out : 'FAILED']);
 }
 console.log('\nResult:');
 for (const [label, where] of results) console.log(`  ${label.padEnd(8)} ${where}`);

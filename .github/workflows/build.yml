@@ -1,25 +1,184 @@
 name: Build installers
+
 on:
   workflow_dispatch:
   push:
     tags: ['v*']
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: ['main']
+
+permissions:
+  contents: write
+
+env:
+  NODE_VERSION: '22'
+  PYTHON_VERSION: '3.11'
+
 jobs:
-  build:
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - { os: windows-latest, target: win,   folder: windows }
-          - { os: macos-latest,   target: mac,   folder: macos }
-          - { os: ubuntu-latest,  target: linux, folder: linux }
-    runs-on: ${{ matrix.os }}
+  test:
+    name: Test (all platforms)
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: 22 }
-      - run: npm install --legacy-peer-deps
-      - run: npm run dist:${{ matrix.target }}
-      - uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.folder }}
-          path: release/${{ matrix.folder }}/*
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+      - name: Run TypeScript type check
+        run: npm run lint
+      - name: Build frontend
+        run: npm run build
+      - name: Run download engine tests
+        run: npm run test:downloads
+      - name: Run IPC tests
+        run: npm run test:ipc
+      - name: Run UI tests
+        run: npm run test:ui
+      - name: Run audio effects tests
+        run: npm run test:fx
+      - name: Run Hindi punctuation tests
+        run: npm run test -- tests/hindiPunctuation.test.ts
+      - name: Run text chunker tests
+        run: npm run test -- tests/textChunker.test.ts
+      - name: Run voice persistence tests
+        run: npm run test -- tests/voicePersistence.test.ts
+      - name: Run voice instruction tests
+        run: npm run test -- tests/voiceInstruction.test.ts
+
+  build-windows:
+    name: Build Windows
+    needs: test
+    if: github.event_name != 'pull_request'
+    runs-on: windows-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+      - name: Build frontend
+        run: npm run build
+      - name: Build Windows installer
+        run: npm run dist:win
+      - name: List build output
+        run: |
+          ls -la release/windows/
+      - name: Upload Windows artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: release/windows/*
+          retention-days: 30
+      - name: Release (tag push only)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release/windows/*
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+
+  build-macos:
+    name: Build macOS
+    needs: test
+    if: github.event_name != 'pull_request'
+    runs-on: macos-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+      - name: Build frontend
+        run: npm run build
+      - name: Build macOS installers
+        run: npm run dist:mac
+      - name: List build output
+        run: |
+          ls -la release/macos/
+      - name: Upload macOS artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos
+          path: release/macos/*
+          retention-days: 30
+      - name: Release (tag push only)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release/macos/*
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+
+  build-linux:
+    name: Build Linux
+    needs: test
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      - name: Install system dependencies for electron-builder
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libnss3-dev libatk-bridge2.0-dev libdrm2 libxkbcommon-dev libgbm-dev libasound2-dev
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+      - name: Build frontend
+        run: npm run build
+      - name: Build Linux installers
+        run: npm run dist:linux
+      - name: List build output
+        run: |
+          ls -la release/linux/
+      - name: Upload Linux artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux
+          path: release/linux/*
+          retention-days: 30
+      - name: Release (tag push only)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release/linux/*
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+
+  build-all:
+    name: Build All (summary)
+    needs: [build-windows, build-macos, build-linux]
+    if: github.event_name != 'pull_request' && always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Summarize build results
+        run: |
+          echo "Build Summary"
+          echo "============="
+          for job in build-windows build-macos build-linux; do
+            result="${{ needs.$job.result }}"
+            echo "$job: $result"
+          done
+          if [[ "${{ needs.build-windows.result }}" != "success" || "${{ needs.build-macos.result }}" != "success" || "${{ needs.build-linux.result }}" != "success" ]]; then
+            echo "::error::One or more platform builds failed"
+            exit 1
+          fi
+          echo "All platform builds succeeded"

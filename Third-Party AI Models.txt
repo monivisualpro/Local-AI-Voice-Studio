@@ -11,3 +11,13 @@ Model names, copyrights, trademarks, weights, and associated intellectual proper
 Official model links and license information are provided in the application's model manager.
 
 The availability of a model through this application does not imply endorsement by, affiliation with, or permission from its publisher beyond what the applicable terms allow.
+
+---
+
+## Full License Details
+
+See [THIRD_PARTY_MODELS.md](THIRD_PARTY_MODELS.md) for a complete table of model licenses, commercial-use permissions, voice cloning permissions, and repository links.
+
+## Software Dependency Licenses
+
+See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for all third-party software dependencies and their licenses.

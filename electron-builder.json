@@ -78,13 +78,6 @@
           "x64",
           "arm64"
         ]
-      },
-      {
-        "target": "pkg",
-        "arch": [
-          "x64",
-          "arm64"
-        ]
       }
     ],
     "hardenedRuntime": false,
@@ -93,14 +86,6 @@
   "dmg": {
     "title": "Local AI Voice Studio ${version}",
     "artifactName": "Local-AI-Voice-Studio-${version}-${arch}.${ext}"
-  },
-  "pkg": {
-    "allowAnywhere": true,
-    "allowCurrentUserHome": true,
-    "allowRootDirectory": true,
-    "isRelocatable": true,
-    "installLocation": "/Applications",
-    "artifactName": "Local-AI-Voice-Studio-Installer-${version}-${arch}.${ext}"
   },
   "linux": {
     "category": "AudioVideo",

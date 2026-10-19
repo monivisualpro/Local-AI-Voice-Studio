@@ -38,7 +38,6 @@ jobs:
         run: npm run test:ui
       - name: Run audio/voice tests
         run: npm run test:fx
-
   build-windows:
     name: Build Windows
     needs: test

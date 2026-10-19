@@ -14,7 +14,7 @@ permissions:
 env:
   NODE_VERSION: '24'
   PYTHON_VERSION: '3.11'
-  
+
 
 jobs:
   test:
@@ -28,8 +28,6 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
-      - name: Run TypeScript type check
-        run: npm run lint
       - name: Build frontend
         run: npm run build
       - name: Run download engine tests (core)

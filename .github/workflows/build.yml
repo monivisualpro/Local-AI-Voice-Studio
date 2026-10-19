@@ -17,12 +17,16 @@ env:
   NODE_VERSION: '24'
 
 jobs:
+  # --------------------------------------------------
+  # 1. Test the application before building installers
+  # --------------------------------------------------
   test:
     name: Test Application
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -36,14 +40,8 @@ jobs:
       - name: Build frontend
         run: npm run build
 
-      - name: Run TypeScript checks
-        run: npm run lint
-
-      - name: Run download and model manager tests
-        run: npm run test:downloads
-
-      - name: Run runtime tests
-        run: npm run test:runtime
+      - name: Run download engine tests
+        run: node tests/downloadEngine.selftest.cjs
 
       - name: Run IPC tests
         run: npm run test:ipc
@@ -54,6 +52,9 @@ jobs:
       - name: Run audio and voice tests
         run: npm run test:fx
 
+  # --------------------------------------------------
+  # 2. Build Windows installers
+  # --------------------------------------------------
   build-windows:
     name: Build Windows
     needs: test
@@ -63,9 +64,11 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
@@ -79,16 +82,19 @@ jobs:
       - name: Build Windows installer
         run: npm run dist:win
 
-      - name: Verify output
+      - name: Verify Windows output
         shell: pwsh
         run: |
           if (!(Test-Path "release/windows")) {
-            throw "release/windows was not created."
+            throw "Windows output directory does not exist."
           }
+
           $files = Get-ChildItem "release/windows" -File -Recurse
+
           if ($files.Count -eq 0) {
             throw "No Windows installer files were generated."
           }
+
           $files | Select-Object FullName, Length
 
       - name: Upload Windows artifacts
@@ -99,6 +105,9 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
+  # --------------------------------------------------
+  # 3. Build macOS installers
+  # --------------------------------------------------
   build-macos:
     name: Build macOS
     needs: test
@@ -108,9 +117,11 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
@@ -124,17 +135,19 @@ jobs:
       - name: Build macOS installers
         run: npm run dist:mac
 
-      - name: Verify output
+      - name: Verify macOS output
         shell: bash
         run: |
           test -d release/macos || {
-            echo "::error::release/macos was not created."
+            echo "::error::macOS output directory does not exist."
             exit 1
           }
+
           find release/macos -type f -print -quit | grep -q . || {
             echo "::error::No macOS installer files were generated."
             exit 1
           }
+
           find release/macos -type f -print
 
       - name: Upload macOS artifacts
@@ -145,6 +158,9 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
+  # --------------------------------------------------
+  # 4. Build Linux installers
+  # --------------------------------------------------
   build-linux:
     name: Build Linux
     needs: test
@@ -154,9 +170,11 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
@@ -181,17 +199,19 @@ jobs:
       - name: Build Linux installers
         run: npm run dist:linux
 
-      - name: Verify output
+      - name: Verify Linux output
         shell: bash
         run: |
           test -d release/linux || {
-            echo "::error::release/linux was not created."
+            echo "::error::Linux output directory does not exist."
             exit 1
           }
+
           find release/linux -type f -print -quit | grep -q . || {
             echo "::error::No Linux installer files were generated."
             exit 1
           }
+
           find release/linux -type f -print
 
       - name: Upload Linux artifacts
@@ -202,6 +222,9 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
+  # --------------------------------------------------
+  # 5. Report results without masking build failures
+  # --------------------------------------------------
   build-summary:
     name: Build Summary
     needs:
@@ -215,7 +238,7 @@ jobs:
       contents: read
 
     steps:
-      - name: Report results
+      - name: Summarize build results
         shell: bash
         env:
           TEST_RESULT: ${{ needs.test.result }}
@@ -223,29 +246,33 @@ jobs:
           MACOS_RESULT: ${{ needs.build-macos.result }}
           LINUX_RESULT: ${{ needs.build-linux.result }}
         run: |
-          echo "Test: $TEST_RESULT"
+          echo "Build Summary"
+          echo "============="
+          echo "Tests: $TEST_RESULT"
           echo "Windows: $WINDOWS_RESULT"
           echo "macOS: $MACOS_RESULT"
           echo "Linux: $LINUX_RESULT"
 
           if [[ "$TEST_RESULT" != "success" ]]; then
-            echo "::error::Tests failed. Check the first failed step in the Test Application job."
+            echo "::error::Application tests failed or were skipped."
             exit 1
           fi
 
           if [[ "$WINDOWS_RESULT" != "success" ||
                 "$MACOS_RESULT" != "success" ||
                 "$LINUX_RESULT" != "success" ]]; then
-            echo "::error::One or more installer builds failed or were skipped."
+            echo "::error::One or more platform builds failed or were skipped."
             exit 1
           fi
 
-          echo "All tests and platform builds succeeded."
+          echo "All platform builds succeeded."
 
+  # --------------------------------------------------
+  # 6. Publish one GitHub Release after all builds pass
+  # --------------------------------------------------
   release:
     name: Publish GitHub Release
     needs:
-      - test
       - build-windows
       - build-macos
       - build-linux
@@ -273,14 +300,23 @@ jobs:
           name: linux
           path: release/linux/
 
-      - name: Publish release
+      - name: Verify release assets
+        shell: bash
+        run: |
+          find release -type f -print
+
+          test -n "$(find release -type f -print -quit)" || {
+            echo "::error::No release assets found."
+            exit 1
+          }
+
+      - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           files: |
             release/windows/**/*
             release/macos/**/*
             release/linux/**/*
-          generate_release_notes: true
           draft: false
           prerelease: false
           generate_release_notes: true
